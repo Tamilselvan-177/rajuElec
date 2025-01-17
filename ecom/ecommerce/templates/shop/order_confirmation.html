@@ -1,0 +1,29 @@
+{% extends 'shop/index.html' %}
+
+{% block title %}
+Order Confirmation - Shopkart
+{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Thank you for your order!</h1>
+    <p>Your order has been placed successfully. Your order details are as follows:</p>
+
+    <h3>Order ID: {{ order.id }}</h3>
+    <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+    <p><strong>Total Price:</strong> Rs. {{ order.total_price }}</p>
+    <p><strong>Shipping Address:</strong> {{ order.address }}</p>
+</div>
+{% endblock content %}
+<style>
+    /* Footer styling */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #f1f1f1;
+      text-align: center;
+      padding: 20px 0;
+    }
+</style>  

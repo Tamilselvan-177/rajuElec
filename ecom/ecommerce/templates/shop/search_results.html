@@ -1,0 +1,88 @@
+{% extends 'shop/index.html' %}
+
+{% block title %}
+  Search Results - Shopkart
+{% endblock title %}
+
+{% block content %}
+  <div class="container py-5">
+    <h1 class="mb-4 text-center">Search Results</h1>
+
+    <!-- <form action="{% url 'search_products' %}" method="get" class="d-flex justify-content-center mb-4">
+      <input 
+        type="text" 
+        name="q" 
+        class="form-control me-2" 
+        placeholder="Search products..." 
+        value="{{ request.GET.q|default_if_none:'' }}" 
+        style="max-width: 400px;">
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-search"></i> Search
+      </button>
+    </form> -->
+
+    {% if results %}
+      <div class="row">
+        {% for product in results %}
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4"> <!-- Adjusted column sizes -->
+            <div class="card shadow-sm border-light rounded">
+              <!-- Product Image -->
+              {% if product.product_image and product.product_image.url %}
+              <img 
+                  src="{{ product.product_image.url }}" 
+                  class="card-img-top img-fluid rounded mx-auto d-block" 
+                  alt="{{ product.name }}" 
+                  style="max-height: 200px; object-fit: contain; width: 100%;">
+          {% else %}
+              <img 
+                  src="/static/default_product_image.png" 
+                  class="card-img-top img-fluid rounded mx-auto d-block" 
+                  alt="Default Image" 
+                  style="max-height: 200px; object-fit: contain; width: 100%;">
+          {% endif %}
+          
+              <div class="card-body">
+                <h5 class="card-title text-center">{{ product.name }}</h5>
+                <h6 class="text-success text-center">Rs. {{ product.selling_price }}</h6>
+                {% if product.original_price %}
+                  <p class="text-muted text-center"><s>Rs. {{ product.original_price }}</s></p>
+                {% endif %}
+                <div class="d-flex justify-content-center mt-3">
+                    <a 
+                    href="{% url 'project_details' cname=product.category.name pname=product.name %}" 
+                    class="btn btn-outline-primary">
+                    <i class="bi bi-eye me-2"></i>View Product
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center text-muted">No products found matching your query.</p>
+    {% endif %}
+  </div>
+<style>
+    .card-img-top {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.btn-outline-primary {
+    transition: 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+</style>
+  {% endblock content %}
+
+{% block styles %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+{% endblock styles %}

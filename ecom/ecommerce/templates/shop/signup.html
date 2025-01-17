@@ -1,0 +1,78 @@
+{% extends 'shop/index.html' %}
+
+{% block title %}
+Sign Up - Shopkart
+{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg rounded-3">
+                <div class="card-header bg-gradient-primary text-white text-center py-4 rounded-top">
+                    <h3 class="mb-0" style="color: black;">Create an Account</h3>
+                </div>
+
+                <!-- Display Success or Error Messages -->
+            
+
+                <div class="card-body p-5">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Username Field -->
+                        <div class="form-floating mb-4">
+                            <input type="text" class="form-control rounded-pill {% if form.username.errors %}is-invalid{% endif %}" id="username" name="username" placeholder="Username" value="{{ form.username.value|default:'' }}" required>
+                            <label for="username">Username</label>
+                            {% for error in form.username.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="form-floating mb-4">
+                            <input type="email" class="form-control rounded-pill {% if form.email.errors %}is-invalid{% endif %}" id="email" name="email" placeholder="Email" value="{{ form.email.value|default:'' }}" required>
+                            <label for="email">Email</label>
+                            {% for error in form.email.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-floating mb-4">
+                            <input type="password" class="form-control rounded-pill {% if form.password1.errors %}is-invalid{% endif %}" id="password1" name="password1" placeholder="Password" required>
+                            <label for="password1">Password</label>
+                            {% for error in form.password1.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Confirm Password Field -->
+                        <div class="form-floating mb-4">
+                            <input type="password" class="form-control rounded-pill {% if form.password2.errors %}is-invalid{% endif %}" id="password2" name="password2" placeholder="Confirm Password" required>
+                            <label for="password2">Confirm Password</label>
+                            {% for error in form.password2.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">Sign Up</button>
+                    </form>
+                </div>
+
+                <div class="card-footer text-center bg-light rounded-bottom">
+                    <p class="mb-0">Already have an account? <a href="{% url 'login' %}" class="text-primary">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

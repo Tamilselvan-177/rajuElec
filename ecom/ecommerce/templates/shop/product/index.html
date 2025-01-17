@@ -1,0 +1,191 @@
+{% extends 'shop/index.html' %}
+
+{% block title %}
+Shopkart | Online Shopping
+{% endblock title %}
+
+{% block content %}
+<section class="bg-light py-5 my-5">
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-12">
+        <h4 class="mb-3 text-center text-primary">{{ category.name }}</h4>
+        <hr style="border-color:#b8bfc2;">
+      </div>
+    </div>
+
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'collections' %}">Categories</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+      </ol>
+    </nav>
+
+    <!-- Product Grid -->
+    <div class="product-grid">
+      {% for item in products %}
+      <div class="product-card">
+        <div class="card">
+          {% if item.product_image %}
+          <div class="image-container">
+            <img src="{{ item.product_image.url }}" class="card-img-top" alt="Product Image">
+          </div>
+          {% else %}
+          <div class="image-container">
+            <img src="/path/to/placeholder-image.jpg" class="card-img-top" alt="Placeholder Image">
+          </div>
+          {% endif %}
+          <a href="{% url 'project_details' category.name item.name %}">
+            <div class="card-body">
+              <h5 class="card-title text-primary">{{ item.name }}</h5>
+              <p class="card-text">
+                <span class="old_price text-muted"><s>Rs.{{ item.original_price }}</s></span>
+                <span class="new_price">Rs.{{ item.selling_price }}</span>
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Overall Page Styling */
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+  }
+
+  /* Section Styling */
+  section {
+    padding-top: 60px;
+  }
+
+  /* Category Heading */
+  h4 {
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .breadcrumb-item a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .breadcrumb-item a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb-item.active {
+    color: #6c757d;
+  }
+
+  /* Grid Container for Product Cards */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));  /* Flexible grid */
+    gap: 20px; /* Spacing between cards */
+    margin-top: 20px;
+  }
+
+  /* Product Card Styling */
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Image Container */
+  .image-container {
+    width: 100%; /* Full width of the container */
+    height: 300px; /* Fixed height for consistent layout */
+    overflow: hidden; /* Ensures images don't overflow */
+    position: relative; /* Allows for better positioning and effects */
+  }
+
+  .image-container img {
+    width: 100%; /* Stretch the image to container's width */
+    height: 100%; /* Stretch the image to container's height */
+    object-fit: contain; /* Ensures the full image is visible without cropping */
+    transition: transform 0.3s ease; /* Smooth transition for hover effect */
+  }
+
+  /* Hover Effect */
+  .image-container:hover img {
+    transform: scale(1.05); /* Slight zoom for a dynamic effect */
+  }
+
+  /* Card Body Styling */
+  .card-body {
+    padding: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #007bff;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+  }
+
+  .card-title:hover {
+    color: #0056b3;
+  }
+
+  .card-text {
+    font-size: 1rem;
+    color: #555;
+  }
+
+  .old_price {
+    font-size: 0.9rem;
+    text-decoration: line-through;
+    color: #888;
+  }
+
+  /* New Price Styling */
+  .new_price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background-color: #28a745;  /* Green background for better contrast */
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);  /* Shadow for emphasis */
+    transition: all 0.3s ease;
+  }
+
+  /* Optional: Add hover effect to emphasize */
+  .new_price:hover {
+    background-color: none;  /* Darker green on hover */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);  /* Stronger shadow on hover */
+  }
+</style>
+
+{% endblock content %}

@@ -1,0 +1,30 @@
+.carousel-item img {
+    object-fit: cover;
+    object-position: top;
+    height: 60vh;
+    overflow: hidden;
+    }
+
+    html {
+        font-size: 14px;
+        }
+        body {
+        font-family: 'Noto Sans', sans-serif;
+        }
+        a {
+        text-decoration: none;
+        }
+    .old_price {
+        text-decoration: line-through;
+        color: red;
+        font-weight: bold;
+
+    }
+    .new_price {
+        background-color: green;
+        font-weight: bold;
+        color: white;
+        padding: 2px;
+    }
+
+

@@ -1,0 +1,194 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid px-3">
+    <a class="navbar-brand" href="{% url 'index' %}">ElectriShop</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto">
+        <!-- Search Bar (Visible on large screens only) -->
+        <form action="{% url 'search_products' %}" method="get" class="d-none d-lg-flex me-3 search-navbar">
+          <input 
+            class="form-control me-2" 
+            type="search" 
+            name="q" 
+            placeholder="Search products..." 
+            value="{{ request.GET.q|default_if_none:'' }}" 
+            aria-label="Search"
+            style="height: 35px; padding-left: 10px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
+          <button class="btn btn-outline-success" type="submit" style="height: 35px; padding: 0 15px; border-radius: 20px;">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+
+        <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
+        <a class="nav-link" href="{% url 'collections' %}">Collections</a>
+        <a class="nav-link" href="{% url 'cart' %}">Cart</a>
+        <a class="nav-link" href="{% url 'view_orders' %}">Orders</a>
+        <a class="nav-link" href="{% url 'wishlist_view' %}">Wishlist</a>
+
+        {% if user.is_authenticated %}
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Offcanvas Sidebar for Mobile View -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">ElectriShop</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'collections' %}">Collections</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cart' %}">Cart</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'view_orders' %}">Orders</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'wishlist_view' %}">Wishlist</a>
+      </li>
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
+
+<!-- Search Bar for Mobile -->
+<div class="d-lg-none p-3">
+  <form action="{% url 'search_products' %}" method="get" class="d-flex flex-column align-items-center">
+    <input 
+      class="form-control mb-2" 
+      type="search" 
+      name="q" 
+      placeholder="Search products..." 
+      value="{{ request.GET.q|default_if_none:'' }}" 
+      aria-label="Search"
+      style="max-width: 100%; border-radius: 20px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+    <button class="btn btn-outline-success w-100 py-2" type="submit" style="border-radius: 20px;">
+      <i class="bi bi-search"></i> Search
+    </button>
+  </form>
+</div>
+
+<!-- Bootstrap and Popper.js (if not already included) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
+
+<style>
+  /* Navbar Styles */
+  .bg-dark {
+    background-color: #111 !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+  }
+
+  .nav-link {
+    color: white;
+    font-size: 1.1rem;
+    padding: 10px 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.4s ease;
+  }
+
+  .nav-link:hover {
+    color: #FFD700; /* Golden yellow text color */
+    background-color: #FFD700; /* Solid yellow background */
+    border-radius: 5px;
+    transform: scale(1.1);
+}
+  .navbar-toggler-icon {
+    background-color: #000;
+  }
+
+  .nav-link.active {
+    color: #FFD700; /* Golden yellow active color */
+    font-weight: bold;
+  }
+
+  /* Search Bar Styling for Large Devices */
+  .search-navbar {
+    display: flex;
+    align-items: center;
+  }
+
+  .d-lg-none {
+    display: block;
+  }
+
+  .form-control {
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    height: 35px;
+    padding-left: 10px;
+  }
+
+  .btn-outline-success {
+    padding: 0 15px;
+    font-size: 1rem;
+    border-radius: 20px;
+    height: 35px;
+  }
+
+  /* Mobile View Search Bar */
+  .form-control.mb-2 {
+    width: 100%;
+  }
+
+  .btn-outline-success.w-100 {
+    padding: 0.5rem;
+    width: 100%;
+  }
+
+  /* Sidebar Effect */
+  @media (max-width: 991px) {
+    .navbar-collapse {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: -250px;
+      height: 100%;
+      width: 250px;
+      background-color: #111;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .navbar-collapse.collapse.show {
+      left: 0;
+    }
+
+    .navbar-toggler-icon {
+      background-color: #000;
+    }
+
+    .nav-link {
+      color: black; /* Mobile view navbar links are black */
+    }
+  }
+
+  /* Sidebar Background */
+  .navbar-collapse.show {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+</style>

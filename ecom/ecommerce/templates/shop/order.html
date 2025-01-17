@@ -1,0 +1,109 @@
+{% extends 'shop/index.html' %}
+
+{% block title %}
+Your Orders - Shopkart
+{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Your Orders</h1>
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Status</th>
+                    <th>Total Price</th>
+                    <th>Payment Method</th>
+                    <th>Ordered At</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>
+                        {% if order.is_canceled %}
+                        <span class="text-danger">Canceled</span>
+                        {% else %}
+                        {{ order.status }}
+                        {% endif %}
+                    </td>
+                    <td>Rs. {{ order.total_price }}</td>
+                    <td>{{ order.payment_method }}</td>
+                    <td>{{ order.ordered_at }}</td>
+                    <td>{{ order.address }}</td>
+                    <td>
+                        {% if not order.is_canceled and order.can_cancel %}
+                        <a href="{% url 'cancel_order' order.id %}" class="btn btn-danger btn-sm">Cancel Order</a>
+                        <span class="countdown text-muted" data-expiry="{{ order.cancel_expiry|date:'Y-m-d H:i:s' }}"></span>
+                        {% else %}
+                        <span class="text-muted">
+                            {% if order.is_canceled %}
+                            Already Canceled
+                            {% else %}
+                            Cannot Cancel
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>You have no orders yet.</p>
+    {% endif %}
+</div>
+{% endblock content %}
+
+<style>
+    /* Footer styling */
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f1f1f1;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 767px) {
+        table {
+            font-size: 12px;
+        }
+        th, td {
+            padding: 8px;
+        }
+        h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<script>
+    // Countdown timer for cancelable orders
+    const countdownElements = document.querySelectorAll('.countdown');
+    countdownElements.forEach(el => {
+        const expiryTime = new Date(el.dataset.expiry);
+        const interval = setInterval(() => {
+            const now = new Date();
+            const timeLeft = expiryTime - now;
+            if (timeLeft <= 0) {
+                el.textContent = 'Expired';
+                clearInterval(interval);
+            } else {
+                const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                el.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            }
+        }, 1000);
+    });
+</script>

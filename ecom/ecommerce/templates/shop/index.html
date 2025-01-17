@@ -1,0 +1,127 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>{% block title %} {% endblock %}</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+        <!-- Bootstrap CSS v5.2.1 -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="{% static 'css/design.css' %}" />
+        
+        <!-- Custom CSS for Footer Alignment -->
+        <style>
+            html, body {
+                height: 100%; /* Ensure body takes up full height */
+                margin: 0; /* Remove default margin */
+            }
+            
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+
+            main {
+                flex: 1; /* This makes the main content area grow and push the footer down */
+            }
+
+            footer {
+                background-color: #f1f1f1;
+                text-align: center;
+                padding: 20px 0;
+                width: 100%;
+                position: relative;
+            }
+
+            .bg-dark {
+                background-color: #343a40 !important;
+            }
+
+            .text-light {
+                color: #f8f9fa !important;
+            }
+
+            footer .container {
+                padding: 0 15px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <header>
+            <!-- place navbar here -->
+            {% include 'shop/nav.html' %}
+        </header>
+        
+        <main>
+            {% block content %}
+            
+            {% endblock %}
+        </main>
+            
+        <footer class="bg-dark text-light py-3">
+            <div class="container">
+                <div class="row">
+                    <!-- Footer Links Section -->
+                    <div class="col-md-6">
+                        <h5>Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li><a class="text-light text-decoration-none" href="{% url 'index' %}">Home</a></li>
+                            <li><a class="text-light text-decoration-none" href="{% url 'collections' %}">Collections</a></li>
+                            <li><a class="text-light text-decoration-none" href="{% url 'register' %}">Register</a></li>
+                        </ul>
+                    </div>
+                    <!-- Contact Section -->
+                    <div class="col-md-6 text-md-end">
+                        <h5>Contact Us</h5>
+                        <p class="mb-1">Email: support@example.com</p>
+                        <p>Phone: +1 (555) 123-4567</p>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <p class="mb-0">&copy; 2024 YourWebsiteName. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+        
+        <style>
+          /* Footer Styling */
+          footer {
+            position: relative;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #343a40; /* Dark background */
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 30px; /* Gives space from the content */
+          }
+        
+          /* Ensuring page content isn't overlapped by footer */
+          body {
+            margin-bottom: 120px; /* Ensures enough space for footer */
+          }
+        </style>
+        <!-- Bootstrap JavaScript Libraries -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+            crossorigin="anonymous"
+        ></script>
+    </body>
+</html>

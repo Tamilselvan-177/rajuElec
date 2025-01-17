@@ -1,0 +1,183 @@
+{% extends 'shop/index.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block title %}
+Cart - Shopkart
+{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Your Cart</h1>
+
+    {% if cart_items %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td><img src="{{ item.product.product_image.url }}" alt="{{ item.product.name }}" class="img-fluid" style="max-height: 100px; object-fit: contain;"></td>
+                <td>{{ item.product.name }}</td>
+                <td>Rs. {{ item.product.selling_price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>
+                    <form method="POST" action="{% url 'remove_from_cart' item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h4>Total Price: Rs. {{ total_price }}</h4>
+
+    <!-- Checkout Form -->
+    <form method="POST">
+        {% csrf_token %}
+        
+        <!-- Shipping Address -->
+        <div class="mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Shipping Address</h5>
+                    <p id="address-display">{{ user.order_set.last.address }}</p>
+                    <button type="button" class="btn btn-primary btn-sm" id="edit-address-btn">
+                        <i class="bi bi-pencil"></i> Edit
+                    </button>
+                    
+                    <div id="edit-address-section" style="display: none;">
+                        <textarea class="form-control" id="address" name="address" required>{{ user.order_set.last.address }}</textarea>
+                        <button type="submit" class="btn btn-success btn-sm mt-2" id="save-address-btn">Save Address</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Phone Number</h5>
+                    <p id="phone-display">{{ user.order_set.last.phone_number }}</p>
+                    <button type="button" class="btn btn-primary btn-sm" id="edit-phone-btn">
+                        <i class="bi bi-pencil"></i> Edit
+                    </button>
+                    
+                    <div id="edit-phone-section" style="display: none;">
+                        <input type="number" class="form-control" id="phone_number" name="phone_number" value="{{ user.order_set.last.phone_number }}" required>
+                        <button type="submit" class="btn btn-success btn-sm mt-2" id="save-phone-btn">Save Phone</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="mb-3">
+            <label for="payment_method" class="form-label">Payment Method</label>
+            <select class="form-select" id="payment_method" name="payment_method">
+                <option value="cod">Cash on Delivery</option>
+                <option value="online">Online Payment</option>
+            </select>
+        </div>
+
+        <!-- UPI Payment (QR code generation) -->
+        <div id="upi-payment" style="display: none;">
+            <h4 class="text-center">Scan the QR Code for Payment</h4>
+            <div id="upi-qr" class="text-center">
+                <img src="{% static qr_code_path %}" alt="QR Code" class="img-fluid" style="max-width: 50%; height: auto; margin: 0 auto;">
+            </div>
+            <input type="text" id="transaction_id" class="form-control mt-3" placeholder="Enter Transaction ID" name="transaction_id">
+        </div>
+
+        <!-- Unified Place Order Button (this button does the same action for both payment methods) -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-success w-100 mt-3" id="place-order-btn">Place Order</button>
+        </div>
+
+    </form>
+
+    {% else %}
+    <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const paymentMethod = document.getElementById('payment_method');
+    const upiPayment = document.getElementById('upi-payment');
+    const transactionInput = document.getElementById('transaction_id');
+    const placeOrderButton = document.getElementById('place-order-btn');
+    const submitTransactionButton = document.getElementById('submit-upi');
+    const editAddressBtn = document.getElementById('edit-address-btn');
+    const editPhoneBtn = document.getElementById('edit-phone-btn');
+    const editAddressSection = document.getElementById('edit-address-section');
+    const editPhoneSection = document.getElementById('edit-phone-section');
+    const saveAddressBtn = document.getElementById('save-address-btn');
+    const savePhoneBtn = document.getElementById('save-phone-btn');
+    const addressDisplay = document.getElementById('address-display');
+    const phoneDisplay = document.getElementById('phone-display');
+    const addressInput = document.getElementById('address');
+    const phoneInput = document.getElementById('phone_number');
+
+    if (paymentMethod && upiPayment) {
+        paymentMethod.addEventListener('change', function () {
+            if (this.value === 'online') {
+                upiPayment.style.display = 'block';
+                submitTransactionButton && (submitTransactionButton.style.display = 'block'); // Safe check
+                placeOrderButton && (placeOrderButton.style.display = 'block');
+                transactionInput && transactionInput.setAttribute("required", "");
+            } else if (this.value === 'cod') {
+                upiPayment.style.display = 'none';
+                submitTransactionButton && (submitTransactionButton.style.display = 'none');
+                placeOrderButton && (placeOrderButton.style.display = 'block');
+                transactionInput && transactionInput.removeAttribute("required");
+            }
+        });
+    }
+
+    if (editAddressBtn && editAddressSection) {
+        editAddressBtn.addEventListener('click', function () {
+            editAddressSection.style.display = 'block';
+            editAddressBtn.style.display = 'none';
+        });
+    }
+
+    if (editPhoneBtn && editPhoneSection) {
+        editPhoneBtn.addEventListener('click', function () {
+            editPhoneSection.style.display = 'block';
+            editPhoneBtn.style.display = 'none';
+        });
+    }
+
+    if (saveAddressBtn && addressInput && addressDisplay) {
+        saveAddressBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const newAddress = addressInput.value;
+            addressDisplay.textContent = newAddress;
+            editAddressSection.style.display = 'none';
+            editAddressBtn.style.display = 'block';
+        });
+    }
+
+    if (savePhoneBtn && phoneInput && phoneDisplay) {
+        savePhoneBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const newPhone = phoneInput.value;
+            phoneDisplay.textContent = newPhone;
+            editPhoneSection.style.display = 'none';
+            editPhoneBtn.style.display = 'block';
+        });
+    }
+});
+
+
+</script>
+
+{% endblock content %}

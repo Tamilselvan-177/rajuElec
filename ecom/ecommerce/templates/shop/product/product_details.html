@@ -1,0 +1,277 @@
+{% extends 'shop/index.html' %}
+
+{% block title %}
+{{ product.name }} - Shopkart
+{% endblock title %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="container py-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'collections' %}">Collections</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'collectionsview' category.name %}">{{ category.name }}</a></li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'project_details' category.name product.name %}">{{ product.name }}</a>
+      </li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <!-- Product Image Section -->
+    <div class="col-md-6">
+      <div class="row">
+        <!-- Product Image Slider -->
+        <div class="col-12">
+          <div id="productImageCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <!-- Main Product Image -->
+              <div class="carousel-item active">
+                {% if product.product_image %}
+                  <img src="{{ product.product_image.url }}" alt="{{ product.name }}" class="d-block w-100" id="main-product-image">
+                {% else %}
+                  <img src="/path/to/placeholder-image.jpg" alt="Placeholder Image" class="d-block w-100" id="main-product-image">
+                {% endif %}
+              </div>
+              <!-- Additional Images -->
+              {% for image in product.additional_images.all %}
+                <div class="carousel-item">
+                  <img src="{{ image.image.url }}" alt="Additional View" class="d-block w-100">
+                </div>
+              {% endfor %}
+            </div>
+            <!-- Carousel Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#productImageCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#productImageCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Thumbnails Section -->
+      <div class="row mt-3">
+        <!-- Main Product Image as the First Thumbnail -->
+        <div class="col-3">
+          <div class="thumb-container">
+            <img src="{{ product.product_image.url }}" alt="Main Product Thumbnail" class="img-thumbnail" onclick="changeMainImage(0)">
+          </div>
+        </div>
+
+        <!-- Additional Thumbnails -->
+        {% for image in product.additional_images.all %}
+          <div class="col-3">
+            <div class="thumb-container">
+              <img src="{{ image.image.url }}" alt="Thumbnail" class="img-thumbnail" onclick="changeMainImage({{ forloop.counter }})">
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Product Details Section -->
+    <div class="col-md-6">
+      <h1 class="mb-3">{{ product.name }}</h1>
+      <hr style="border-color: #b8bfc2;">
+      <h4 class="text-success">Rs. {{ product.selling_price }}</h4>
+      {% if product.original_price %}
+        <p class="text-muted"><s>Rs. {{ product.original_price }}</s></p>
+      {% endif %}
+      <p class="my-4">{{ product.description }}</p>
+    
+      {% if product.quantity == 0 %}
+        <p class="text-danger">Out of Stock</p>
+      {% else %}
+        <form method="POST" action="{% url 'add_to_cart' product.id %}">
+          <!-- Quantity Selection with Icon -->
+          <div class="d-flex align-items-center mb-4">
+            <label for="quantity" class="me-3">Quantity:</label>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-boxes me-2"></i>
+              <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" style="width: 80px;">
+            </div>
+          </div>
+    
+          <!-- Add to Cart with Cart Icon -->
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="bi bi-cart-plus me-2"></i>Add to Cart
+          </button>
+        </form>
+    
+        <!-- Wishlist Button (Left side of Add to Cart button) -->
+        <form method="POST" action="{% url 'add_to_wishlist' category.name product.id %}" id="wishlist-form">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-lg mt-3 ms-3 wishlist-btn" id="wishlist-btn">
+            {% if is_in_wishlist %}
+              <i class="bi bi-heart-break me-2"></i>Remove from Wishlist
+            {% else %}
+              <i class="bi bi-heart me-2"></i>Add to Wishlist
+            {% endif %}
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Adjust Wishlist Button Alignment */
+  .wishlist-btn {
+    margin-left: 10px; /* Add some margin to the left of the button */
+  }
+
+  /* Wishlist button hover effect */
+  .wishlist-btn:hover {
+    background-color: red;
+    border-color: red;
+    color: white;
+  }
+
+  /* Add to Cart button hover effect */
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+  }
+
+  /* Carousel Image Styling */
+  .carousel-inner img {
+  object-fit: contain;
+  height: 350px; /* Adjust the image height as per your needs */
+}
+
+  /* Thumbnail Image Styling */
+  .thumb-container {
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+  }
+
+  .thumb-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: pointer;
+  }
+
+  /* Adjust the space between thumbnails */
+  .row.mt-3 {
+      margin-left: -5px; /* Adjust margin for mobile */
+      margin-right: -5px; /* Adjust margin for mobile */
+    }
+  body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+  }
+
+  h1, h4 {
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  /* Breadcrumb Styling */
+  .breadcrumb {
+    background-color: transparent;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .breadcrumb-item a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .breadcrumb-item a:hover {
+    text-decoration: underline;
+  }
+
+  /* Button Customization */
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 30px;
+    padding: 10px 20px;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+  }
+
+  .btn-outline-danger {
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 30px;
+    padding: 10px 20px;
+  }
+
+  .wishlist-btn {
+    margin-left: 15px;
+    border-radius: 30px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .wishlist-btn:hover {
+    background-color: red;
+    color: white;
+    border-color: red;
+  }
+
+  /* Quantity Input Styling */
+  #quantity {
+    width: 80px;
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .col-md-6 {
+      margin-bottom: 20px;
+    }
+
+    .breadcrumb {
+      font-size: 0.8rem;
+    }
+
+    .btn-lg {
+      font-size: 0.9rem;
+      padding: 10px 15px;
+    }
+
+    .row.mt-3 {
+      gap: 5px; /* Reduced gap for mobile view */
+    }
+
+    .thumb-container {
+      width: 60px; /* Adjusted thumbnail width for mobile */
+      height: 60px; /* Adjusted thumbnail height for mobile */
+    }
+  }
+</style>
+
+
+<!-- Include Bootstrap Icons CDN for icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Function to change the carousel to the clicked thumbnail image
+  function changeMainImage(index) {
+    var carousel = new bootstrap.Carousel(document.getElementById('productImageCarousel'));
+    carousel.to(index); // Move the carousel to the clicked image
+  }
+</script>
+
+{% endblock content %}
