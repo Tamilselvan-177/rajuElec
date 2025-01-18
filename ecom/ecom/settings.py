@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-mon^8c^-m&s#l4q#wj#2^3%q*fvyvo3m^+j17wri)-^yv!8rjs
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -87,11 +87,14 @@ WSGI_APPLICATION = 'ecom.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',  # This will create the SQLite database in your project directory
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'railway',  # Replace with your Railway database name
+        'USER': 'root',     # Replace with your Railway username
+        'PASSWORD': 'PXBcaoVSeagYlQxUOxfvBpdBjRrCwnvv',  # Replace with your Railway password
+        'HOST': 'mysql.railway.internal',  # Replace with Railway host
+        'PORT': '3306',     # Replace with Railway port
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
